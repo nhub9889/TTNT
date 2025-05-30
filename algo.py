@@ -55,9 +55,9 @@ def uniform_cost_search(G, start, goal, charging_stations, max_battery=100, cons
         if current_node.name in charging_stations and current_node.battery < max_battery:
             charged_node = Node(
                 name=current_node.name,
-                parent=current_node.parent,  # Giữ nguyên lộ trình
-                g=current_node.g,  # Không tốn chi phí
-                battery=max_battery,  # Sạc đầy pin
+                parent=current_node,  # SỬA: parent phải là current_node
+                g=current_node.g,
+                battery=max_battery,
                 x=current_node.x,
                 y=current_node.y
             )
@@ -72,7 +72,11 @@ def uniform_cost_search(G, start, goal, charging_stations, max_battery=100, cons
 
         # Duyệt các node kế tiếp
         for neighbor in G.neighbors(current_node.name):
-            edge_data = G[current_node.name][neighbor][0]  # Lấy dữ liệu cạnh đầu tiên
+            # SỬA: xử lý multiple edges
+            edge_data = min(
+                G[current_node.name][neighbor].values(),
+                key=lambda x: x.get('length', 1.0)
+            )
             distance = edge_data.get('length', 1.0)
             battery_needed = distance * consumption_rate
 
@@ -104,8 +108,7 @@ def uniform_cost_search(G, start, goal, charging_stations, max_battery=100, cons
 
     return None
 
-
-def a_star(G, start, goal, charging_stations, max_battery=100, consumption_rate=0.001):
+def a_star(G, start, goal, charging_stations, max_battery=100, consumption_rate=1):
     # Khởi tạo trạng thái ban đầu
     start_x, start_y = G.nodes[start]['x'], G.nodes[start]['y']
     start_node = Node(start, g=0, battery=max_battery, x=start_x, y=start_y)
