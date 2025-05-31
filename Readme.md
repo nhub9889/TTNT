@@ -6,7 +6,7 @@
 ## 🛠 Công nghệ sử dụng
 - Python + Flask
 - OpenStreetMap (qua thư viện `osmnx`)
-- Thuật toán: A*, UCS (tự cài đặt)
+- Thuật toán: A*, UCS
 - LeafletJS (frontend bản đồ)
 - Nominatim API (geocoding)
 
@@ -29,4 +29,5 @@ pip install -r requirements.txt
 python app.py
 ```
 
-![Giao diện](app.png)
+![Giao diện](AStar.png)
+![Giao diện](UCS.png)
