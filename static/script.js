@@ -7,9 +7,7 @@ let currentStart = null;
 let currentEnd = null;
 let currentRouteDetails = null;
 let chargingMarkers = [];
-let controlsCollapsed = false;
 
-// Hàm khởi tạo bản đồ
 function initMap() {
     map = L.map('map').setView([10.7769, 106.7009], 13);
 
@@ -18,35 +16,14 @@ function initMap() {
         attribution: '© OpenStreetMap'
     }).addTo(map);
 
-    // Thêm nút thu/phóng
-    L.control.zoom({
-        position: 'bottomright'
-    }).addTo(map);
-
     loadChargingStations();
 
-    // Thêm sự kiện cho nút toggle controls
-    document.getElementById('toggle-controls').addEventListener('click', toggleControls);
-
-    // Thêm sự kiện cho nút đóng steps
     document.getElementById('close-steps').addEventListener('click', () => {
         document.getElementById('steps-container').style.display = 'none';
     });
 }
 
-// Hàm bật/tắt controls
-function toggleControls() {
-    const controls = document.getElementById('controls');
-    controlsCollapsed = !controlsCollapsed;
 
-    if (controlsCollapsed) {
-        controls.classList.add('collapsed');
-    } else {
-        controls.classList.remove('collapsed');
-    }
-}
-
-// Hàm tải trạm sạc
 function loadChargingStations() {
     fetch('/charging')
         .then(res => res.json())
@@ -159,7 +136,7 @@ function displayRouteDetails(routeData, algorithm) {
         <div><strong>Số lần sạc:</strong> ${chargingCount}</div>
     `;
 
-    // Hiển thị từng bước
+
     routeData.steps.forEach((step, index) => {
         const stepElement = document.createElement('div');
         stepElement.className = `step-item ${step.is_charging ? 'charging-step' : ''}`;
@@ -176,24 +153,24 @@ function displayRouteDetails(routeData, algorithm) {
         let stepIcon = '➡️';
         let stepLabel = 'Di chuyển';
         if (index === 0) {
-            stepIcon = '/static/start.png';
+            stepIcon = "/static/start.png";
             stepLabel = 'Bắt đầu';
         } else if (index === routeData.steps.length - 1) {
-            stepIcon = '/static/end.png';
+            stepIcon = "/static/end.png";
             stepLabel = 'Kết thúc';
         } else if (step.is_charging) {
-            stepIcon = '/static/icon.png';
+            stepIcon = "/static/icon.png";
             stepLabel = 'Sạc pin';
         }
 
         stepElement.innerHTML = `
             <div class="step-header">
                 <span>${stepIcon}</span>
-                <span>${stepLabel} - Node ${step.name}</span>
+                <span>${stepLabel}</span>
             </div>
             <div class="step-distance">Khoảng cách: ${step.distance ? step.distance.toFixed(2) + 'm' : '--'}</div>
             ${batteryBar}
-            ${step.is_charging ? '<div class="charging-note">Đã sạc đầy pin</div>' : ''}
+            ${step.is_charging ? '<div class="charging-note">Đã sạc pin</div>' : ''}
         `;
 
         stepsList.appendChild(stepElement);
@@ -236,7 +213,7 @@ function UCS() {
         }
 
         if (data.route && data.route.length > 0) {
-            // Vẽ đường đi trên bản đồ
+
             routeLine = L.polyline(data.route, {
                 color: '#2ecc71',
                 weight: 5,
@@ -251,7 +228,6 @@ function UCS() {
                 displayRouteDetails(data, "UCS");
             }
 
-            // Thông báo thành công
             const successMsg = L.popup()
                 .setLatLng([currentEnd[0], currentEnd[1]])
                 .setContent("Tìm đường bằng UCS thành công!")

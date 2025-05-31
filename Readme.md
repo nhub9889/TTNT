@@ -1,7 +1,7 @@
 # Đồ án trí tuệ nhân tạo đề tài xe điện
 [![Python](https://img.shields.io/badge/python-3.8-blue.svg)](https://www.python.org/)
 
-Ứng dụng web tìm đường đi tối ưu cho xe điện trong khu vực, hỗ trợ các trạm sạc điện, sử dụng thuật toán A* và Uniform Cost Search (UCS), hiển thị trên bản đồ OSM thông qua Leaflet.
+Ứng dụng web tìm đường đi tối ưu cho xe điện trong khu vực, hỗ trợ các trạm sạc điện, sử dụng thuật toán A* và Uniform Cost Search (UCS). Hỗ trợ ưu tiên tìm đến trạm sạc gần nhất nếu có dấu hiệu không đủ điện đến đích (Sử dụng thuật toán A* để tìm đường đến trạm sạc gần nhất). Hiển thị trên bản đồ OSM thông qua Leaflet.
 
 ## 🛠 Công nghệ sử dụng
 - Python + Flask
@@ -29,4 +29,4 @@ pip install -r requirements.txt
 python app.py
 ```
 
-![Giao diện](đường_dẫn_ảnh)
+![Giao diện](app.png)
