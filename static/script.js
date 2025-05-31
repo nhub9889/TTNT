@@ -126,14 +126,13 @@ function displayRouteDetails(routeData, algorithm) {
 
     // Hiển thị tổng quan lộ trình
     const totalDistance = routeData.steps.reduce((sum, step) => sum + (step.distance || 0), 0).toFixed(2);
-    const chargingCount = routeData.steps.filter(step => step.is_charging).length;
+
 
     const summaryDiv = document.getElementById('summary');
     summaryDiv.innerHTML = `
         <div><strong>Thuật toán:</strong> <span class="algorithm-tag ${algorithm === 'A*' ? 'a-star-tag' : 'ucs-tag'}">${algorithm}</span></div>
         <div><strong>Tổng khoảng cách:</strong> ${totalDistance} mét</div>
-        <div><strong>Số bước:</strong> ${routeData.steps.length}</div>
-        <div><strong>Số lần sạc:</strong> ${chargingCount}</div>
+        
     `;
 
 
@@ -165,7 +164,6 @@ function displayRouteDetails(routeData, algorithm) {
 
         stepElement.innerHTML = `
             <div class="step-header">
-                <span>${stepIcon}</span>
                 <span>${stepLabel}</span>
             </div>
             <div class="step-distance">Khoảng cách: ${step.distance ? step.distance.toFixed(2) + 'm' : '--'}</div>

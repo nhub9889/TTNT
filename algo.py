@@ -93,7 +93,7 @@ def find_nearest_charging_station(G, current_node, charging_stations, consumptio
 
     return None, float('inf'), float('inf')
 
-def a_star_to_charging(G, start, charging_stations, max_battery=100, consumption_rate=0.25):
+def a_star_to_charging(G, start, charging_stations, max_battery=100, consumption_rate=0.025):
     """
     Tìm đường đến trạm sạc gần nhất bằng thuật toán A*
     Trả về đường đi đến trạm sạc gần nhất
@@ -388,38 +388,30 @@ def uniform_cost_search(G, start, goal, charging_stations, max_battery=100, cons
                 return path[::-1]
 
             # Tích hợp sạc tại trạm như một phần của không gian trạng thái
-            if current_node.name in charging_stations:
-                distance_to_goal = calculate_distance(G, current_node.name, goal)
-                max_range = current_node.battery / consumption_rate
-                required_battery = distance_to_goal * consumption_rate
+            if current_node.name in charging_stations and current_node.battery < max_battery:
+                needed_charge = max_battery - current_node.battery
+                charged_battery = max_battery
+                charged_node = Node(
+                    name=current_node.name,
+                    parent=current_node,
+                    g=current_node.g,
+                    battery=charged_battery,
+                    h=current_node.h,
+                    x=current_node.x,
+                    y=current_node.y,
+                    action="charge",
+                    charge_amount=needed_charge,
+                    target='goal'
+                )
 
-                if current_node.battery < max_battery and required_battery > current_node.battery:
-                    buffer = required_battery * 0.2
-                    needed_charge = min(
-                        max(required_battery + buffer - current_node.battery, 0),
-                        max_battery - current_node.battery
-                    )
-                    if needed_charge > 0:
-                        charged_battery = min(current_node.battery + needed_charge, max_battery)
-                        charged_node = Node(
-                            name=current_node.name,
-                            parent=current_node,
-                            g=current_node.g,
-                            battery=charged_battery,
-                            x=current_node.x,
-                            y=current_node.y,
-                            action="charge",
-                            charge_amount=needed_charge
-                        )
+                rounded_battery = round(charged_node.battery, 1)
+                state_key = (charged_node.name, rounded_battery)
 
-                        rounded_battery = round(charged_node.battery, 4)
-                        state_key = (charged_node.name, rounded_battery)
+                if state_key not in best_state or best_state[state_key] > charged_node.g:
+                    best_state[state_key] = charged_node.g
+                    heapq.heappush(open_set, (charged_node.g, next(counter), charged_node))
 
-                        if state_key not in best_state or best_state[state_key] > charged_node.g:
-                            best_state[state_key] = charged_node.g
-                            heapq.heappush(open_set, (charged_node.g, next(counter), charged_node))
-
-                            continue
+                    continue
 
             # Duyệt hàng xóm
             has_valid_neighbor = False
